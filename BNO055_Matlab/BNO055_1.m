@@ -1,10 +1,11 @@
 % Author: Dong Heon Han @ FREE LAB
 % 11/21/2023
+clear 
 
 % Device variables
-a = arduino();                              % constructor method that initializes a new Arduino object
-bno = bno055(a, 'OperatingMode', 'ndof');   % constructor function used to create an instance of the BNO055 sensor object  
-accCalib = 0; gyrCalib = 0; magCalib = 0;   % Accelerometer, Gyroscope, Magnetometer calibration flag
+ardn = arduino();                              % constructor method that initializes a new Arduino object "ardn"
+bno = bno055(ardn, 'OperatingMode', 'ndof');   % constructor function used to create an instance of the BNO055 sensor object  
+accCalib = 0; gyrCalib = 0; magCalib = 0;      % Accelerometer, Gyroscope, Magnetometer calibration flag
 
 % Start the calibration
 fprintf('Calibrating the BNO055 sensor . . . \n');
@@ -12,15 +13,17 @@ fprintf('Calibrating the BNO055 sensor . . . \n');
 iter = 0;                                           % iteration initinalization 
 while(prod([accCalib, gyrCalib, magCalib]) ~= 1)    % when all variable = 1, break
    iter = iter + 1;
-   fprintf('iteration %d\n', iter)                  % show the iteration 
+   fprintf('\niteration %d\n', iter)                % show the iteration 
    
    % Sensor Readings
    acc = bno.readCalibrationStatus.Accelerometer;
-   gyr = bno.readCalibrationStatus.Gyroscope;       
+   gyr = bno.readCalibrationStatus.Gyroscope;  
    magn = bno.readCalibrationStatus.Magnetometer; 
    
    % Display the acc gyr magn status
-   disp(acc); disp(gyr); disp(magn);    
+   fprintf('Accelerometer: ');  disp(acc); 
+   fprintf('Gyroscope: '); disp(gyr); 
+   fprintf('Magnetometer: '); disp(magn);    
    
    % Accelerometer Calibration
    if strcmpi(acc, "full") && isequal(accCalib, 0)
@@ -48,3 +51,5 @@ fprintf('READ ORIENTATION\n');
 for i = 1:100
    readOrientation(bno)
 end
+
+clear ardn
