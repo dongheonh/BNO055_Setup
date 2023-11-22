@@ -1,6 +1,6 @@
 # BNO055_Tutorial
 Tutorial for BNO055
-
+***  Calibration
 When using multiple BNO055 sensors, there are a few key points to consider regarding calibration:
 
 1. **Individual Calibration**: Each BNO055 sensor must be calibrated individually. Calibration is specific to each sensor due to variations in sensor characteristics and mounting orientations. The calibration process involves rotating the sensor in various orientations to calibrate the accelerometer, magnetometer, and gyroscope.
