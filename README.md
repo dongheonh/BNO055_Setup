@@ -1,7 +1,7 @@
 # BNO055_Tutorial
 
 
-## Calibration
+## A. Calibration
 
 When using multiple BNO055 sensors, there are a few key points to consider regarding calibration:
 
