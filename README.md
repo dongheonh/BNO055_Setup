@@ -20,5 +20,5 @@ In summary, for eight BNO055 sensors, you will need to:
 - Upon each startup, load the correct calibration data to each respective sensor.
 - Manage I2C addressing to communicate with each sensor individually, likely using an I2C multiplexer.
 
-               ![acccalibration](https://github.com/dongheonh/BNO055_Setup/assets/142549534/58ba8824-9026-41ec-aae7-184a166b25c3)
+![acccalibration](https://github.com/dongheonh/BNO055_Setup/assets/142549534/58ba8824-9026-41ec-aae7-184a166b25c3)
 
