@@ -82,17 +82,6 @@ void initializeSensor(Adafruit_BNO055& bno, uint8_t channel) {
   bno.setExtCrystalUse(true); // Use the external crystal for more accuracy
 }
 
-
-
-
-  
-
-
-
-
-
-
-
 bool checkAndPrintCalibration(Adafruit_BNO055& bno, uint8_t channel) {
   bool calib_status = 0;
   tcaselect(channel); // Select the appropriate channel on the multiplexer
