@@ -36,17 +36,26 @@ void loop() {
   }
   // If calibration was finished, get angular orientation at each iteration and send it to computer
   if (calib_fnish == 1) {
-    sensors_event_t event;                                              // data structure (or a 'struct' in C/C++) defined by the Adafruit Unified Sensor Driver                                         
-    bno.getEvent(&event);                                               // sensors_event_t: struct that holds sensor reading data in a uniform way
-    
+    // Create a variable to hold sensor event data
+    sensors_event_t event;
+
+    // Read and print the orientation data from each BNO055 sensor
+    tcaselect(0); // Select the first BNO055 sensor
+    bno1.getEvent(&event); // Get the orientation data
+    Serial.print("Orientation: "); // Print the sensor ID
+    printOrientation(event.orientation); // Print the orientation data
+
+    tcaselect(1); // Repeat for the second BNO055 sensor
+    bno2.getEvent(&event);
     Serial.print("Orientation: ");
-    Serial.print(event.orientation.x, 3);                               // field/structure that specifically represents the x-axis value of the orientation
-    Serial.print(", ");
-    Serial.print(event.orientation.y, 3);
-    Serial.print(", ");
-    Serial.print(event.orientation.z, 3);
-    Serial.println();
-    delay(100);
+    printOrientation(event.orientation);
+
+    tcaselect(2); // Repeat for the third BNO055 sensor
+    bno3.getEvent(&event);
+    Serial.print("Orientation: ");
+    printOrientation(event.orientation);
+
+    delay(500); // Delay for 3 seconds before the next reading
   } else {
     // Continuously check and print calibration status for each sensor
     calib_bno1 = checkAndPrintCalibration(bno1, 0); // Check first sensor
@@ -73,33 +82,71 @@ void initializeSensor(Adafruit_BNO055& bno, uint8_t channel) {
   bno.setExtCrystalUse(true); // Use the external crystal for more accuracy
 }
 
+
+
+
+  
+
+
+
+
+
+
+
 bool checkAndPrintCalibration(Adafruit_BNO055& bno, uint8_t channel) {
   bool calib_status = 0;
   tcaselect(channel); // Select the appropriate channel on the multiplexer
   uint8_t system, gyro, accel, mag; // Variables to store calibration status
   bno.getCalibration(&system, &gyro, &accel, &mag); // Get calibration status
 
-  if (system == 0x03) { // Check if system calibration status is fully calibrated
-    Serial.print("Fully Calibrated - Channel "); // Print the channel number
-    Serial.print(channel);
-    Serial.print(": ");
+  // Check if all components are fully calibrated (values should be 3)
+  if (system < 3 || gyro < 3 || accel < 3 || mag < 3) {
+    Serial.println("Sensor not fully calibrated. Please calibrate the sensor by moving it through various orientations.");
+    if (system < 3) {
+      Serial.println("system not fully calibrated");
+    }
+    if (gyro < 3) {
+      Serial.println("gyro not fully calibrated");
+    } 
+    if (accel < 3) {
+      Serial.println("accelerometer not fully calibrated");
+    }
+    if (mag < 3) {
+      Serial.println("magnometer not fully calibrated");
+    }
+  
+  } else {
+    Serial.println("Sensor fully calibrated.");
 
     adafruit_bno055_offsets_t calibrationData; // Structure to hold calibration data
     bno.getSensorOffsets(calibrationData); // Get sensor offsets
 
     // Print accelerometer offsets
-    Serial.print("Accel: ");
+    Serial.print("Accelerometer: ");
     Serial.print(calibrationData.accel_offset_x); Serial.print(" ");
     Serial.print(calibrationData.accel_offset_y); Serial.print(" ");
     Serial.print(calibrationData.accel_offset_z); Serial.print(", ");
 
-    // You can repeat the above lines to print gyro and magnetometer offsets
-    // ...
+    Serial.print("gyro: ");
+    Serial.print(calibrationData.gyro_offset_x); Serial.print(" ");
+    Serial.print(calibrationData.gyro_offset_y); Serial.print(" ");
+    Serial.print(calibrationData.gyro_offset_z); Serial.print(", ");
+    
+    Serial.print("magnometer: ");
+    Serial.print(calibrationData.mag_offset_x); Serial.print(" ");
+    Serial.print(calibrationData.mag_offset_y); Serial.print(" ");
+    Serial.print(calibrationData.mag_offset_z); Serial.print(", ");
 
     Serial.println(); // Print a newline
-    calib_status = 1;
-  } else {
-    Serial.print("Not Calibrated - Calibrating sensor on channel "); // Print calibration message
-    Serial.println(channel);
   }
+}
+
+void printOrientation(sensors_vec_t orientation) {
+  // Function to print orientation data
+  Serial.print(orientation.x, 3);
+  Serial.print(", ");
+  Serial.print(orientation.y, 3);
+  Serial.print(", ");
+  Serial.print(orientation.z, 3);
+  Serial.println();
 }
